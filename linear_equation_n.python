@@ -1,0 +1,41 @@
+import numpy as np
+
+class Perceptron:
+    def __init__(self, num_inputs, learning_rate=0.01):
+        self.weights = np.random.uniform(-1, 1, num_inputs)
+        self.bias = 5
+        self.learning_rate = learning_rate
+
+    def predict(self, inputs):
+        linear_output = np.dot(inputs, self.weights) + self.bias
+        return 1 if linear_output >= 0 else 0
+
+    def train(self, X, y, epochs):
+        for _ in range(epochs):
+            for inputs, target in zip(X, y):
+                prediction = self.predict(inputs)
+                error = target - prediction
+                self.weights += self.learning_rate * error * inputs
+                self.bias += self.learning_rate * error
+
+    def mean_squared_error(self, X, y):
+        predictions = np.array([self.predict(x) for x in X])
+        return np.mean((predictions - y) ** 2)
+
+# Generate random dataset
+def generate_data(n, samples=10):
+    X = np.random.uniform(-1, 1, (samples, n))
+    true_weights = np.random.uniform(-1, 1, n)
+    y = np.dot(X, true_weights) + 5
+    return X, y
+
+# Training and testing for n=4 and n=5
+for n in [4, 5]:
+    X, y = generate_data(n)
+    perceptron = Perceptron(num_inputs=n)
+    perceptron.train(X, y, epochs=100)
+    mse = perceptron.mean_squared_error(X, y)
+    print(f"Results for n={n}:")
+    print(f"Learned weights: {perceptron.weights}")
+    print(f"Bias: {perceptron.bias}")
+    print(f"Mean Squared Error: {mse}\n")
